@@ -8,17 +8,27 @@ public class GameManager : MonoBehaviour
     public float Score { get; private set; }
     public float CoinCount { get; private set; }
 
-    private void Awake()
+    private void Start()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        // Auto-login for prototype testing
+        // In a real app, you'd show a UI or load saved creds
+        APIManager.Instance.Login("player@test.com", "password123", (success) => {
+            if (success)
+            {
+                Debug.Log($"Welcome back, {APIManager.Instance.CurrentUsername}!");
+            }
+            else
+            {
+                Debug.LogWarning("Auto-login failed. Use RegisterUI to create account.");
+                // Fallback: Register a temp user (Optional for prototype)
+                APIManager.Instance.Register("PlayerOne", "player@test.com", "password123", (regSuccess, err) => {
+                     if(regSuccess) 
+                     {
+                         APIManager.Instance.Login("player@test.com", "password123", null);
+                     }
+                });
+            }
+        });
     }
 
     public void StartGame()
@@ -32,7 +42,11 @@ public class GameManager : MonoBehaviour
     {
         IsGamePlaying = false;
         Debug.Log("Game Over! Score: " + Score);
-        // Trigger UI and potentially send score to backend
+        
+        // Submit Run Data
+        APIManager.Instance.SubmitRun(Score, (int)Score, (int)CoinCount, (success) => {
+            if(success) Debug.Log("Run data saved to server.");
+        });
     }
 
     public void AddScore(float amount)
