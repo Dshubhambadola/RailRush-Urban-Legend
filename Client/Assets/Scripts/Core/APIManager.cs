@@ -196,4 +196,66 @@ public class APIManager : MonoBehaviour
             }
         }
     }
+
+    public void CreateCrew(string name, string tag, Action<bool> callback)
+    {
+        StartCoroutine(CreateCrewRoutine(name, tag, callback));
+    }
+
+    private IEnumerator CreateCrewRoutine(string name, string tag, Action<bool> callback)
+    {
+        string json = JsonUtility.ToJson(new { name = name, tag = tag, userId = CurrentUserId });
+        
+        using (UnityWebRequest www = new UnityWebRequest(BASE_URL + "/crews", "POST"))
+        {
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            www.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            www.downloadHandler = new DownloadHandlerBuffer();
+            www.SetRequestHeader("Content-Type", "application/json");
+
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Create Crew Error: " + www.error);
+                callback?.Invoke(false);
+            }
+            else
+            {
+                Debug.Log("Crew Created: " + www.downloadHandler.text);
+                callback?.Invoke(true);
+            }
+        }
+    }
+
+    public void JoinCrew(string crewId, Action<bool> callback)
+    {
+        StartCoroutine(JoinCrewRoutine(crewId, callback));
+    }
+
+    private IEnumerator JoinCrewRoutine(string crewId, Action<bool> callback)
+    {
+        string json = JsonUtility.ToJson(new { userId = CurrentUserId });
+        
+        using (UnityWebRequest www = new UnityWebRequest(BASE_URL + "/crews/" + crewId + "/join", "POST"))
+        {
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            www.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            www.downloadHandler = new DownloadHandlerBuffer();
+            www.SetRequestHeader("Content-Type", "application/json");
+
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Join Crew Error: " + www.error);
+                callback?.Invoke(false);
+            }
+            else
+            {
+                Debug.Log("Joined Crew: " + www.downloadHandler.text);
+                callback?.Invoke(true);
+            }
+        }
+    }
 }
