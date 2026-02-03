@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const runRoutes = require('./routes/runs');
 const leaderboardRoutes = require('./routes/leaderboard');
 const crewRoutes = require('./routes/crews');
+const iapRoutes = require('./routes/iap');
 
 // Middleware
 app.use(helmet());
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/runs', runRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/crews', crewRoutes);
+app.use('/api/iap', iapRoutes);
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date(), version: '0.1.0' });
 });
