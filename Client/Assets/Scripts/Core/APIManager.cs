@@ -25,6 +25,19 @@ public class RunResponse
     public string runId;
 }
 
+[System.Serializable]
+public class LeaderboardEntry
+{
+    public string username;
+    public int score;
+}
+
+[System.Serializable]
+public class LeaderboardResponse
+{
+    public LeaderboardEntry[] entries;
+}
+
 public class APIManager : MonoBehaviour
 {
     public static APIManager Instance { get; private set; }
@@ -149,6 +162,37 @@ public class APIManager : MonoBehaviour
             {
                 Debug.Log("Run Submitted Successfully: " + www.downloadHandler.text);
                 callback?.Invoke(true);
+            }
+        }
+    }
+
+    public void GetLeaderboard(Action<List<LeaderboardEntry>> callback)
+    {
+        StartCoroutine(GetLeaderboardRoutine(callback));
+    }
+
+    private IEnumerator GetLeaderboardRoutine(Action<List<LeaderboardEntry>> callback)
+    {
+        using (UnityWebRequest www = UnityWebRequest.Get(BASE_URL + "/leaderboard"))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Leaderboard Error: " + www.error);
+                callback?.Invoke(null);
+            }
+            else
+            {
+                // Unity's JsonUtility cannot parse top-level arrays directly.
+                // We need to wrap it or use a helper. 
+                // For simplicity, let's assume the server returns an object { "entries": [...] } 
+                // or we use a wrapper hack.
+                // Let's change the server to return an array and use a simple wrapper hack here.
+                string json = "{\"entries\":" + www.downloadHandler.text + "}";
+                LeaderboardResponse res = JsonUtility.FromJson<LeaderboardResponse>(json);
+                
+                callback?.Invoke(new List<LeaderboardEntry>(res.entries));
             }
         }
     }
