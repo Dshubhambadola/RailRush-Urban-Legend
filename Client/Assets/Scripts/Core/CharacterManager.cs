@@ -53,6 +53,14 @@ public class CharacterManager : MonoBehaviour
                 
                 // Assign Camera to follow this new player
                 // CameraFollow.Instance.SetTarget(currentPlayerObject.transform); // Placeholder
+                
+                // Assign to TrackManager
+                TrackManager tm = FindObjectOfType<TrackManager>();
+                if (tm != null) tm.SetPlayer(currentPlayerObject.transform);
+
+                // Assign Camera
+                CameraFollow cam = FindObjectOfType<CameraFollow>();
+                if (cam != null) cam.target = currentPlayerObject.transform;
             }
         }
         else

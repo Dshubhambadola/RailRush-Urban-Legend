@@ -1,47 +1,57 @@
 # RailRush: Urban Legend
 
-> "Outrun the past, chase the future"
+**RailRush: Urban Legend** is a high-octane endless runner set in a cyberpunk metropolis. Dash, jump, and slide through the subway lines, dodging trains and drones while building your Crew's reputation.
 
-RailRush is a high-octane endless runner set in a cyberpunk-meets-street-art urban railway network. Players control graffiti artists fleeing from AI security drones through neon-lit metros and rooftops.
+## 🎮 How to Play
+**Objective**: Run as far as you can, collect Coins, and gain Crew Rep.
+- **Swipe UP**: Jump
+- **Swipe DOWN**: Slide / Roll
+- **Swipe LEFT/RIGHT**: Switch Lanes
+- **Collect Coins**: Used to unlock new Characters and Boards.
+- **Avoid Obstacles**: Trains, Barriers, and Drones will end your run!
 
-## Project Structure
+## 🚀 Development Setup
 
-- **Client/**: Unity project containing game logic and assets.
-- **Server/**: Node.js backend API for progression, leaderboards, and auth.
+### 1. Database (PostgreSQL)
+Ensure you have PostgreSQL installed and running. Create a database named `railrush`.
+```bash
+# Optional: If using docker
+docker run --name railrush-db -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres
+```
+Run the schema script in your SQL tool or terminal:
+`Server/db/schema.sql`
 
-## Getting Started
+### 2. Backend Server (Node.js)
+Navigate to the Server directory:
+```bash
+cd Server
+npm install
+# Ensure .env is set up or use defaults (localhost, 5432, postgres/password)
+npm start
+```
+*Server runs on http://localhost:3000*
 
-### Prerequisites
+### 3. Game Client (Unity)
+1.  Open **Unity Hub** and add the `Client/` folder as a project.
+    -   *Note*: This project is compatible with **Unity 6 (6000.x)** and **2022 LTS**. If prompted to upgrade, click **Confirm**.
+2.  **Open Scene**: Go to `Assets/Scenes/Main.unity` (or create one if empty).
+3.  **Setup Scene**:
+    -   Ensure `GameManager`, `TrackManager`, `APIManager`, `AdManager` are in the scene.
+    -   Link `TrackPrefabs` and `CharacterData` in the Inspectors.
+4.  **Play**: Press the Play button in the Editor.
 
-- Unity 2022 LTS or newer
-- Node.js v18+
-- npm
+## 🛠 Features Implemented
+-   **Core**: Endless 3-lane running, Object Pooling (60 FPS target).
+-   **Backend**: Auth (Register/Login), Secure Run Validation, Leaderboards.
+-   **Social**: Create/Join Crews.
+-   **Monetization**: Interstitial/Rewarded Ads (Mock), IAP Verification.
 
-### Server Setup
+## 📂 Project Structure
+-   `/Client`: Unity Project (C#)
+-   `/Server`: Node.js Express API + Jest Tests
 
-1. Navigate to the server directory:
-   ```bash
-   cd Server
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Run tests:
-   ```bash
-   npm test
-   ```
-4. Start the server:
-   ```bash
-   npm start
-   ```
-
-### Client Setup
-
-1. Open Unity Hub.
-2. Add the `Client` folder as a new project.
-3. Open the project.
-4. Open the `Assets/Scenes/Main` scene (create if not exists).
+---
+*Version 0.6.0-monetization (Beta Candidate)*
 
 ## Core Features (Prototype)
 

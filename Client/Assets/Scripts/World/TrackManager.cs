@@ -25,6 +25,8 @@ public class TrackManager : MonoBehaviour
 
     private void Update()
     {
+        if (playerTransform == null) return;
+
         if (playerTransform.position.z - safeZone > (spawnZ - simultaneousSegments * trackLength))
         {
             SpawnTrack(Random.Range(0, trackPrefabs.Length));
@@ -34,6 +36,12 @@ public class TrackManager : MonoBehaviour
 
     private void SpawnTrack(int prefabIndex)
     {
+        if (trackPrefabs == null || trackPrefabs.Length == 0)
+        {
+            Debug.LogError("TrackManager: No Track Prefabs assigned! Did you run 'RailRush -> Create Test Assets'?");
+            return;
+        }
+
         // Use ObjectPool instead of Instantiate
         // Ensure ObjectPool is in the scene. For prototype, we lazily add it if missing or assume it's there.
         if (ObjectPool.Instance == null)
@@ -56,5 +64,10 @@ public class TrackManager : MonoBehaviour
     {
         ObjectPool.Instance.ReturnToPool(activeTracks[0]);
         activeTracks.RemoveAt(0);
+    }
+
+    public void SetPlayer(Transform player)
+    {
+        this.playerTransform = player;
     }
 }
